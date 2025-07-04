@@ -35,9 +35,11 @@
 
 ## CRITICAL REQUIREMENT
 ⚠️ **ALL DOCUMENTATION AND CODE COMMENTS MUST BE IN ENGLISH**
-- This is a mandatory requirement from the project specification
-- These rules must be strictly followed throughout the project
-- All README files, code comments, documentation must be in English
+- This is a mandatory requirement from the project specification.
+- These rules must be strictly followed throughout the project.
+- All README files, code comments, documentation must be in English.
+- All Key decisions should be recorded in this file. 
+- If key decisions section is too redundant, make it concise
 
 ## Key Decision Log
 
@@ -92,6 +94,22 @@
     - VS Code: `.vscode/settings.json`, `.vscode/extensions.json`, `.vscode/launch.json`
     - Directories: `frontend/`, `backend/`, `shared/` with basic structure
   - **Status**: ✅ Phase 1 Complete - Ready for git push
+
+### 2024-12-28 (Phase 2 Progress)
+- **Decision**: Package Configuration & TypeScript Setup
+  - **Completed**: Package.json files creation, TypeScript configuration, Prisma schema
+  - **Created Files**:
+    - Frontend: `frontend/package.json`, `frontend/tsconfig.json` (React + Vite + @dnd-kit)
+    - Backend: `backend/package.json`, `backend/tsconfig.json` (Express + Prisma + tsx)
+    - Shared: `shared/package.json`, `shared/tsconfig.json` (共享类型定义)
+    - Database: `backend/prisma/schema.prisma` (PostgreSQL schema with cascading deletes)
+  - **Key Technology Decisions**:
+    - **Frontend Build Tool**: Vite (替代 Create React App，更快的开发体验)
+    - **Backend Dev Tool**: tsx (替代 ts-node，更快的 TypeScript 执行)
+    - **Drag & Drop**: @dnd-kit/core (现代化的拖拽库，性能优秀)
+    - **Database IDs**: cuid() (替代 UUID，更短且 URL 友好)
+    - **Monorepo TypeScript**: 使用 TypeScript project references 提高编译效率
+  - **Status**: 🟡 Phase 2 In Progress - Package files created, need Docker & placeholder files
 
 
 ## Architecture Design
