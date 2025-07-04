@@ -128,3 +128,4 @@ prisma/migrations/migration_lock.toml
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+/.pnpm-store

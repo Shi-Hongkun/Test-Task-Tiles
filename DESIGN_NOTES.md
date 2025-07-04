@@ -43,97 +43,18 @@
 
 ## Key Decision Log
 
-### 2025-07-04
-- **Decision**: Frontend Architecture Selection
-  - **Choice**: React + TypeScript + Tailwind CSS
-  - **Drag & Drop**: React DnD or @dnd-kit/core
-  - **State Management**: React Context API or Redux Toolkit
-  - **Status**: ✅ Approved by User
+### Core Architecture (2024-12-28)
+- **Tech Stack**: React + TypeScript + Tailwind CSS (frontend), Node.js + Express + Prisma (backend)
+- **Database**: PostgreSQL with cuid() IDs, cascading deletes
+- **Package Manager**: pnpm (faster than npm, similar to Python's uv)
+- **Build Tools**: Vite (frontend), tsx (backend dev server)
+- **Testing**: Vitest with @testing-library/react and supertest
+- **Development**: VS Code Dev Container + Docker + pnpm workspace
 
-- **Decision**: Backend Architecture Selection
-  - **Choice**: Node.js + Express + TypeScript
-  - **Database**: PostgreSQL with Prisma ORM
-  - **API Style**: RESTful API
-  - **Status**: ✅ Approved by User
-
-- **Decision**: Database Schema Design
-  - **Tables**: boards, columns, tasks
-  - **Relationships**: board -> columns -> tasks (cascading deletes)
-  - **ID Strategy**: UUID for all primary keys
-  - **Status**: 🟡 Proposed (awaiting implementation)
-
-- **Decision**: Package Management Tool Selection
-  - **Choice**: pnpm (similar to Python's uv)
-  - **Reasons**: Faster than npm, disk efficient, modern dependency resolution
-  - **Alternative considered**: npm (default), yarn (popular)
-  - **Status**: ✅ Approved by User
-
-- **Decision**: Project Structure & Environment Management
-  - **Dev Container**: VS Code dev container for consistent development
-  - **Docker**: Multi-service orchestration with docker-compose
-  - **Environment Strategy**: Docker + Dev Container + pnpm + nvm
-  - **Status**: ✅ Approved by User
-
-- **Decision**: Repository Structure
-  - **Choice**: Monorepo (single repository)
-  - **Rationale**: 
-    - Shared TypeScript types between frontend and backend
-    - Simplified development setup and deployment
-    - Better suited for small team/individual projects
-    - Unified version control and tooling
-  - **Structure**: frontend/ + backend/ + shared/ directories
-  - **Status**: ✅ Approved by User
-
-### 2024-12-28 (Phase 1 Completion)
-- **Decision**: Project Structure & Configuration Setup
-  - **Completed**: Directory structure creation, workspace configuration, dev container setup
-  - **Created Files**:
-    - Root: `package.json`, `pnpm-workspace.yaml`, `env.example`, `.prettierrc`, `.gitignore` (updated)
-    - Docker: `docker-compose.yml`, `docker-compose.dev.yml`
-    - Dev Container: `.devcontainer/devcontainer.json`, `.devcontainer/docker-compose.yml`, `.devcontainer/Dockerfile`
-    - VS Code: `.vscode/settings.json`, `.vscode/extensions.json`, `.vscode/launch.json`
-    - Directories: `frontend/`, `backend/`, `shared/` with basic structure
-  - **Status**: ✅ Phase 1 Complete - Ready for git push
-
-### 2024-12-28 (Phase 2 Progress)
-- **Decision**: Package Configuration & TypeScript Setup
-  - **Completed**: Package.json files creation, TypeScript configuration, Prisma schema
-  - **Created Files**:
-    - Frontend: `frontend/package.json`, `frontend/tsconfig.json` (React + Vite + @dnd-kit)
-    - Backend: `backend/package.json`, `backend/tsconfig.json` (Express + Prisma + tsx)
-    - Shared: `shared/package.json`, `shared/tsconfig.json` (共享类型定义)
-    - Database: `backend/prisma/schema.prisma` (PostgreSQL schema with cascading deletes)
-  - **Key Technology Decisions**:
-    - **Frontend Build Tool**: Vite (替代 Create React App，更快的开发体验)
-    - **Backend Dev Tool**: tsx (替代 ts-node，更快的 TypeScript 执行)
-    - **Drag & Drop**: @dnd-kit/core (现代化的拖拽库，性能优秀)
-    - **Database IDs**: cuid() (替代 UUID，更短且 URL 友好)
-    - **Monorepo TypeScript**: 使用 TypeScript project references 提高编译效率
-  - **Additional Files Created**:
-    - Frontend: `index.html`, `vite.config.ts`, `tailwind.config.js`, `postcss.config.js`
-    - Frontend Components: `src/main.tsx`, `src/App.tsx`, `src/index.css`, basic page components
-    - Backend: `src/index.ts` (Express server setup), `.env.example`
-    - Docker: `Dockerfile`, `Dockerfile.dev`, `nginx.conf` for each service
-    - Config: `.eslintrc.js`, shared types in `shared/src/types/`
-    - Testing: Vitest configuration, test files in `__tests__/` directories
-  - **Status**: ✅ Phase 2 Complete - All configuration files and basic structure created
-
-### 2024-12-28 (Phase 2 Extension - Testing Setup)
-- **Decision**: Testing Framework Integration
-  - **Completed**: Comprehensive testing setup with Vitest
-  - **Created Files**:
-    - Backend: `backend/src/__tests__/index.test.ts`, `backend/vitest.config.ts`
-    - Frontend: `frontend/src/__tests__/App.test.tsx`, `frontend/src/__tests__/pages/BoardsPage.test.tsx`
-    - Frontend: `frontend/src/test-setup.ts`, `frontend/vitest.config.ts`
-    - Shared: `shared/src/__tests__/types.test.ts`, `shared/vitest.config.ts`
-    - Updated: `package.json` files with testing dependencies
-  - **Key Technology Decisions**:
-    - **Testing Framework**: Vitest (替代 Jest，更快且与 Vite 原生集成)
-    - **Frontend Testing**: @testing-library/react + jsdom
-    - **Backend Testing**: supertest for HTTP endpoint testing
-    - **Test Structure**: `__tests__/` directories (similar to Python pytest structure)
-    - **Coverage**: V8 coverage provider for accurate TypeScript coverage
-  - **Status**: ✅ Testing Setup Complete - Ready for development with TDD approach
+### Implementation Progress
+- **✅ Phase 1**: Project structure, Docker, dev container setup
+- **✅ Phase 2**: Package configuration, TypeScript, Prisma schema, testing framework
+- **🎯 Phase 3**: Ready for core backend API implementation
 
 
 ## Architecture Design
