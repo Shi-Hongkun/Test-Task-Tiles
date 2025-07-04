@@ -1,0 +1,23 @@
+{
+  "recommendations": [
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    "Prisma.prisma",
+    "ms-vscode.vscode-json",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-eslint",
+    "ms-vscode-remote.remote-containers",
+    "GitHub.copilot",
+    "ms-vscode.vscode-docker",
+    "ms-python.python",
+    "ms-vscode.powershell",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-thunder-client",
+    "humao.rest-client"
+  ],
+  "unwantedRecommendations": [
+    "ms-vscode.vscode-typescript",
+    "hookyqr.beautify"
+  ]
+} 
