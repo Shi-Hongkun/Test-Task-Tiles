@@ -181,11 +181,13 @@ task-tiles/
 │   │   ├── hooks/             # Custom React hooks
 │   │   ├── services/          # API services
 │   │   ├── types/             # TypeScript types
-│   │   └── utils/             # Utility functions
+│   │   ├── utils/             # Utility functions
+│   │   └── __tests__/         # Frontend tests
 │   ├── public/                # Static assets
 │   ├── package.json           # Frontend dependencies
 │   ├── tsconfig.json          # TypeScript configuration
 │   ├── tailwind.config.js     # Tailwind CSS configuration
+│   ├── vitest.config.ts       # Test configuration
 │   └── Dockerfile             # Frontend Docker image
 ├── backend/                    # Node.js + Express backend
 │   ├── src/
@@ -194,16 +196,26 @@ task-tiles/
 │   │   ├── services/          # Business logic
 │   │   ├── middleware/        # Express middleware
 │   │   ├── types/             # TypeScript types
-│   │   └── utils/             # Utility functions
+│   │   ├── utils/             # Utility functions
+│   │   └── __tests__/         # Backend tests
 │   ├── prisma/                # Database schema & migrations
 │   │   ├── schema.prisma      # Database schema
 │   │   └── migrations/        # Database migrations
 │   ├── package.json           # Backend dependencies
 │   ├── tsconfig.json          # TypeScript configuration
+│   ├── vitest.config.ts       # Test configuration
 │   └── Dockerfile             # Backend Docker image
+├── shared/                     # Shared types and utilities
+│   ├── src/
+│   │   ├── types/             # Shared TypeScript types
+│   │   └── __tests__/         # Shared code tests
+│   ├── package.json           # Shared package dependencies
+│   ├── tsconfig.json          # Shared TypeScript configuration
+│   └── vitest.config.ts       # Shared test configuration
 ├── docker-compose.yml          # Production orchestration
 ├── docker-compose.dev.yml      # Development orchestration
 ├── pnpm-workspace.yaml         # pnpm monorepo configuration
+├── .eslintrc.js               # ESLint configuration
 ├── .gitignore                  # Git ignore rules
 ├── README.md                   # Project documentation
 └── DESIGN_NOTES.md             # Design decisions & notes
@@ -211,11 +223,13 @@ task-tiles/
 
 ### Technology Stack
 
-- **Frontend**: React, TypeScript, Tailwind CSS, React DnD/@dnd-kit
+- **Frontend**: React, TypeScript, Tailwind CSS, @dnd-kit/core
 - **Backend**: Node.js, Express, TypeScript, Prisma ORM
 - **Database**: PostgreSQL
+- **Testing**: Vitest (Jest alternative), @testing-library/react, supertest
 - **Package Manager**: pnpm (fast, efficient, like Python's uv)
 - **Development**: VS Code Dev Container, Docker, Docker Compose
+- **Build Tools**: Vite (frontend), tsx (backend dev server)
 - **Authentication**: JWT (planned)
 
 ## 📚 API Documentation
@@ -235,18 +249,130 @@ Full API documentation is available at `/docs/api.md`.
 
 ## 🧪 Testing
 
+We use **Vitest** (similar to Python's pytest) as our testing framework across all packages. The project includes comprehensive test coverage for frontend components, backend APIs, and shared types.
+
+### 📁 Test Structure
+
+```
+backend/
+├── src/
+│   └── __tests__/
+│       └── index.test.ts          # API endpoint tests
+├── vitest.config.ts               # Backend test configuration
+
+frontend/
+├── src/
+│   ├── __tests__/
+│   │   ├── App.test.tsx          # React component tests
+│   │   └── pages/
+│   │       └── BoardsPage.test.tsx # Page component tests
+│   └── test-setup.ts             # Test setup & mocks
+├── vitest.config.ts              # Frontend test configuration
+
+shared/
+├── src/
+│   └── __tests__/
+│       └── types.test.ts         # TypeScript type tests
+└── vitest.config.ts              # Shared package test configuration
+```
+
+### 🚀 Quick Start Testing
+
+1. **Install dependencies first**:
+   ```bash
+   # Install all dependencies
+   pnpm install
+   ```
+
+2. **Run tests**:
+   ```bash
+   # Run all tests (similar to pytest)
+   pnpm test
+   
+   # Run specific service tests
+   pnpm --filter backend test      # Backend API tests
+   pnpm --filter frontend test     # Frontend React tests
+   pnpm --filter shared test       # Shared type tests
+   ```
+
+### 🔧 Test Commands
+
+| Command | Description | Python pytest equivalent |
+|---------|-------------|---------------------------|
+| `pnpm test` | Run all tests | `pytest` |
+| `pnpm test:coverage` | Run tests with coverage | `pytest --cov` |
+| `pnpm --filter backend test --watch` | Watch mode for backend | `pytest --watch` |
+| `pnpm --filter frontend test:ui` | Visual test interface | `pytest --html` |
+| `pnpm --filter frontend test --reporter=verbose` | Verbose output | `pytest -v` |
+
+### 📊 Test Coverage
+
 ```bash
-# Run frontend tests
-pnpm --filter frontend test
+# Generate test coverage reports
+pnpm test:coverage
 
-# Run backend tests
-pnpm --filter backend test
+# View coverage in browser
+pnpm --filter frontend test:coverage
+pnpm --filter backend test:coverage
+```
 
-# Run all tests
-pnpm test
+### 🎯 Test Types
 
-# Run integration tests
-pnpm test:integration
+1. **Backend Tests** (`backend/src/__tests__/`)
+   - HTTP endpoint testing with supertest
+   - Express middleware validation
+   - API response format verification
+   - Error handling tests
+
+2. **Frontend Tests** (`frontend/src/__tests__/`)
+   - React component rendering
+   - User interaction testing
+   - Router navigation tests
+   - Component state management
+
+3. **Shared Type Tests** (`shared/src/__tests__/`)
+   - TypeScript type validation
+   - DTO structure verification
+   - Type safety enforcement
+
+### 🐛 Debugging Tests
+
+```bash
+# Run a specific test file
+pnpm --filter backend test src/__tests__/index.test.ts
+
+# Run tests with debugging
+pnpm --filter backend test --inspect-brk
+
+# Run tests in watch mode during development
+pnpm --filter frontend test --watch
+```
+
+### ✅ Writing New Tests
+
+Create test files with `.test.ts` or `.test.tsx` extension:
+
+```typescript
+// backend/src/__tests__/new-feature.test.ts
+import { describe, it, expect } from 'vitest'
+
+describe('New Feature', () => {
+  it('should work correctly', () => {
+    expect(true).toBe(true)
+  })
+})
+```
+
+### 🚨 CI/CD Testing
+
+Tests are automatically run in CI/CD pipeline:
+
+```bash
+# This runs in GitHub Actions
+pnpm install
+pnpm test:coverage
+pnpm lint
+pnpm type-check
 ```
 
 ## 🤝 Contributing
@@ -276,9 +402,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - ✅ Technology Stack Selection
 - ✅ Directory Structure Design
 - ✅ Development Environment Configuration
-- 🟡 Ready for Implementation Phase
-- ⏳ Core Features Implementation
-- ⏳ Testing and Documentation
+- ✅ Package Configuration & TypeScript Setup
+- ✅ Docker & Container Configuration
+- ✅ Testing Framework Setup (Vitest)
+- ✅ Basic Component Structure
+- 🎯 Ready for Phase 3: Core Backend Implementation
+- ⏳ API Development & Database Integration
+- ⏳ Frontend Feature Implementation
+- ⏳ End-to-End Testing
 - ⏳ Cloud Deployment Setup
 
 ---

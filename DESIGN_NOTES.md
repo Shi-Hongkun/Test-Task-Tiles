@@ -115,7 +115,25 @@
     - Backend: `src/index.ts` (Express server setup), `.env.example`
     - Docker: `Dockerfile`, `Dockerfile.dev`, `nginx.conf` for each service
     - Config: `.eslintrc.js`, shared types in `shared/src/types/`
+    - Testing: Vitest configuration, test files in `__tests__/` directories
   - **Status**: ✅ Phase 2 Complete - All configuration files and basic structure created
+
+### 2024-12-28 (Phase 2 Extension - Testing Setup)
+- **Decision**: Testing Framework Integration
+  - **Completed**: Comprehensive testing setup with Vitest
+  - **Created Files**:
+    - Backend: `backend/src/__tests__/index.test.ts`, `backend/vitest.config.ts`
+    - Frontend: `frontend/src/__tests__/App.test.tsx`, `frontend/src/__tests__/pages/BoardsPage.test.tsx`
+    - Frontend: `frontend/src/test-setup.ts`, `frontend/vitest.config.ts`
+    - Shared: `shared/src/__tests__/types.test.ts`, `shared/vitest.config.ts`
+    - Updated: `package.json` files with testing dependencies
+  - **Key Technology Decisions**:
+    - **Testing Framework**: Vitest (替代 Jest，更快且与 Vite 原生集成)
+    - **Frontend Testing**: @testing-library/react + jsdom
+    - **Backend Testing**: supertest for HTTP endpoint testing
+    - **Test Structure**: `__tests__/` directories (similar to Python pytest structure)
+    - **Coverage**: V8 coverage provider for accurate TypeScript coverage
+  - **Status**: ✅ Testing Setup Complete - Ready for development with TDD approach
 
 
 ## Architecture Design
