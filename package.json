@@ -1,0 +1,44 @@
+{
+  "name": "task-tiles",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A visual project management board inspired by Trello",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "scripts": {
+    "dev": "concurrently \"pnpm --filter backend dev\" \"pnpm --filter frontend dev\"",
+    "build": "pnpm --filter backend build && pnpm --filter frontend build",
+    "start": "pnpm --filter backend start",
+    "test": "pnpm --filter backend test && pnpm --filter frontend test",
+    "test:integration": "pnpm --filter backend test:integration",
+    "lint": "pnpm --filter backend lint && pnpm --filter frontend lint",
+    "lint:fix": "pnpm --filter backend lint:fix && pnpm --filter frontend lint:fix",
+    "format": "prettier --write .",
+    "db:generate": "pnpm --filter backend db:generate",
+    "db:push": "pnpm --filter backend db:push",
+    "db:migrate": "pnpm --filter backend db:migrate",
+    "db:seed": "pnpm --filter backend db:seed",
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up --build",
+    "docker:prod": "docker-compose up --build",
+    "clean": "pnpm --filter backend clean && pnpm --filter frontend clean"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "prettier": "^3.1.1",
+    "@types/node": "^20.10.5"
+  },
+  "keywords": [
+    "task-management",
+    "trello",
+    "project-board",
+    "react",
+    "typescript",
+    "nodejs",
+    "postgresql"
+  ],
+  "author": "",
+  "license": "MIT"
+} 
