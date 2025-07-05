@@ -3,6 +3,11 @@ set -e
 
 echo "🔧 Starting development container setup..."
 
+# Clean up any existing processes
+echo "🧹 Cleaning up old processes..."
+pkill -f "vite" 2>/dev/null || echo "No vite processes to clean"
+pkill -f "tsx.*backend" 2>/dev/null || echo "No backend processes to clean"
+
 # Wait for PostgreSQL to be ready
 echo "⏳ Waiting for PostgreSQL to be ready..."
 until nc -z postgres 5432; do
