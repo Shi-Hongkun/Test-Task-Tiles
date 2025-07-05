@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useBoardContext } from '../contexts/BoardContext';
 import { Task, ColumnWithTasks, TaskFormData, ColumnFormData } from '../types';
 import { BoardView } from '../components/BoardView';
@@ -7,6 +7,7 @@ import { TaskForm, ColumnForm } from '../components/forms';
 
 export const BoardPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const {
     currentBoard,
     loading,
@@ -104,6 +105,17 @@ export const BoardPage: React.FC = () => {
         title: formData.title,
         columnId: currentTaskColumnId,
         ...(formData.description && { description: formData.description }),
+        ...(formData.projectNumber && {
+          projectNumber: formData.projectNumber,
+        }),
+        ...(formData.assignee && { assignee: formData.assignee }),
+        ...(formData.assigner && { assigner: formData.assigner }),
+        ...(formData.priority && { priority: formData.priority }),
+        ...(formData.itemType && { itemType: formData.itemType }),
+        ...(formData.initiative && { initiative: formData.initiative }),
+        ...(formData.estimateSize && { estimateSize: formData.estimateSize }),
+        ...(formData.deadline && { deadline: formData.deadline }),
+        ...(formData.tags && { tags: formData.tags }),
       };
       await createTask(createTaskData);
     }
@@ -113,10 +125,32 @@ export const BoardPage: React.FC = () => {
     if (currentTask) {
       const updateTaskData = {
         title: formData.title,
-        ...(formData.description && { description: formData.description }),
+        ...(formData.description !== undefined && {
+          description: formData.description,
+        }),
+        ...(formData.projectNumber !== undefined && {
+          projectNumber: formData.projectNumber,
+        }),
+        ...(formData.assignee !== undefined && { assignee: formData.assignee }),
+        ...(formData.assigner !== undefined && { assigner: formData.assigner }),
+        ...(formData.priority !== undefined && { priority: formData.priority }),
+        ...(formData.itemType !== undefined && { itemType: formData.itemType }),
+        ...(formData.initiative !== undefined && {
+          initiative: formData.initiative,
+        }),
+        ...(formData.estimateSize !== undefined && {
+          estimateSize: formData.estimateSize,
+        }),
+        ...(formData.deadline !== undefined && { deadline: formData.deadline }),
+        ...(formData.tags !== undefined && { tags: formData.tags }),
       };
       await updateTask(currentTask.id, updateTaskData);
     }
+  };
+
+  // Navigation handler
+  const handleNavigateHome = () => {
+    navigate('/');
   };
 
   // Close modals
@@ -140,6 +174,7 @@ export const BoardPage: React.FC = () => {
         onCreateTask={handleCreateTask}
         onEditTask={handleEditTask}
         onDeleteTask={handleDeleteTask}
+        onNavigateHome={handleNavigateHome}
       />
 
       {/* Create Column Modal */}

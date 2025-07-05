@@ -57,6 +57,32 @@ export interface UpdateColumnRequest {
   position?: number;
 }
 
+// Enum Types
+export enum Priority {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  URGENT = 'URGENT',
+}
+
+export enum ItemType {
+  TASK = 'TASK',
+  BUG = 'BUG',
+  FEATURE = 'FEATURE',
+  ENHANCEMENT = 'ENHANCEMENT',
+  PRODUCT_A = 'PRODUCT_A',
+  PRODUCT_B = 'PRODUCT_B',
+}
+
+export enum EstimateSize {
+  XS = 'XS',
+  S = 'S',
+  M = 'M',
+  L = 'L',
+  XL = 'XL',
+  XXL = 'XXL',
+}
+
 // Task Types
 export interface Task {
   id: string;
@@ -64,6 +90,18 @@ export interface Task {
   description?: string;
   position: number;
   columnId: string;
+
+  // Enhanced fields
+  projectNumber?: string;
+  assignee?: string;
+  assigner?: string;
+  priority?: Priority;
+  itemType?: ItemType;
+  initiative?: string;
+  estimateSize?: EstimateSize;
+  deadline?: string;
+  tags?: string[];
+
   createdAt: string;
   updatedAt: string;
 }
@@ -73,6 +111,17 @@ export interface CreateTaskRequest {
   description?: string;
   position?: number;
   columnId: string;
+
+  // Enhanced fields
+  projectNumber?: string;
+  assignee?: string;
+  assigner?: string;
+  priority?: Priority;
+  itemType?: ItemType;
+  initiative?: string;
+  estimateSize?: EstimateSize;
+  deadline?: string;
+  tags?: string[];
 }
 
 export interface UpdateTaskRequest {
@@ -80,6 +129,17 @@ export interface UpdateTaskRequest {
   description?: string;
   position?: number;
   columnId?: string;
+
+  // Enhanced fields
+  projectNumber?: string;
+  assignee?: string;
+  assigner?: string;
+  priority?: Priority;
+  itemType?: ItemType;
+  initiative?: string;
+  estimateSize?: EstimateSize;
+  deadline?: string;
+  tags?: string[];
 }
 
 // Drag & Drop Types
@@ -140,6 +200,15 @@ export interface ColumnFormData {
 export interface TaskFormData {
   title: string;
   description: string;
+  projectNumber?: string;
+  assignee?: string;
+  assigner?: string;
+  priority?: Priority;
+  itemType?: ItemType;
+  initiative?: string;
+  estimateSize?: EstimateSize;
+  deadline?: string;
+  tags?: string[];
 }
 
 // Modal Types

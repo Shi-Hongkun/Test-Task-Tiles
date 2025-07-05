@@ -15,6 +15,18 @@ export class TaskService {
       description: task.description || undefined,
       position: task.position,
       columnId: task.columnId,
+
+      // Enhanced fields
+      projectNumber: task.projectNumber || undefined,
+      assignee: task.assignee || undefined,
+      assigner: task.assigner || undefined,
+      priority: task.priority || undefined,
+      itemType: task.itemType || undefined,
+      initiative: task.initiative || undefined,
+      estimateSize: task.estimateSize || undefined,
+      deadline: task.deadline ? task.deadline.toISOString() : undefined,
+      tags: task.tags || [],
+
       createdAt: task.createdAt,
       updatedAt: task.updatedAt,
     };
@@ -45,6 +57,17 @@ export class TaskService {
         description: data.description,
         position: data.position,
         columnId: data.columnId,
+
+        // Enhanced fields
+        projectNumber: data.projectNumber,
+        assignee: data.assignee,
+        assigner: data.assigner,
+        priority: data.priority,
+        itemType: data.itemType,
+        initiative: data.initiative,
+        estimateSize: data.estimateSize,
+        deadline: data.deadline ? new Date(data.deadline) : undefined,
+        tags: data.tags,
       },
     });
     return this.convertTaskToDto(task);
@@ -55,14 +78,32 @@ export class TaskService {
     id: string,
     data: UpdateTaskRequest
   ): Promise<TaskDto | null> {
+    const updateData: any = {};
+
+    // Only update provided fields
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.description !== undefined)
+      updateData.description = data.description;
+    if (data.position !== undefined) updateData.position = data.position;
+    if (data.columnId !== undefined) updateData.columnId = data.columnId;
+
+    // Enhanced fields
+    if (data.projectNumber !== undefined)
+      updateData.projectNumber = data.projectNumber;
+    if (data.assignee !== undefined) updateData.assignee = data.assignee;
+    if (data.assigner !== undefined) updateData.assigner = data.assigner;
+    if (data.priority !== undefined) updateData.priority = data.priority;
+    if (data.itemType !== undefined) updateData.itemType = data.itemType;
+    if (data.initiative !== undefined) updateData.initiative = data.initiative;
+    if (data.estimateSize !== undefined)
+      updateData.estimateSize = data.estimateSize;
+    if (data.deadline !== undefined)
+      updateData.deadline = data.deadline ? new Date(data.deadline) : null;
+    if (data.tags !== undefined) updateData.tags = data.tags;
+
     const task = await prisma.task.update({
       where: { id },
-      data: {
-        title: data.title,
-        description: data.description,
-        position: data.position,
-        columnId: data.columnId,
-      },
+      data: updateData,
     });
     return this.convertTaskToDto(task);
   }

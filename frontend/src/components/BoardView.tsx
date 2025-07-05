@@ -14,7 +14,7 @@ import {
   SortableContext,
   horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { Plus } from 'lucide-react';
+import { Plus, Home, ChevronRight } from 'lucide-react';
 import { Task, ColumnWithTasks } from '../types';
 import { useBoardContext } from '../contexts/BoardContext';
 import { BoardColumn } from './BoardColumn';
@@ -28,6 +28,7 @@ interface BoardViewProps {
   onCreateTask: (columnId: string) => void;
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
+  onNavigateHome: () => void;
 }
 
 export const BoardView: React.FC<BoardViewProps> = ({
@@ -38,6 +39,7 @@ export const BoardView: React.FC<BoardViewProps> = ({
   onCreateTask,
   onEditTask,
   onDeleteTask,
+  onNavigateHome,
 }) => {
   const { currentBoard, loading, fetchBoard, updateTaskPosition } =
     useBoardContext();
@@ -175,6 +177,21 @@ export const BoardView: React.FC<BoardViewProps> = ({
       <div className="h-full flex flex-col">
         {/* Board Header */}
         <div className="flex-shrink-0 p-6 border-b border-gray-200">
+          {/* Breadcrumb Navigation */}
+          <div className="flex items-center gap-2 mb-4">
+            <button
+              onClick={onNavigateHome}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <Home className="h-4 w-4" />
+              <span className="text-sm font-medium">Home</span>
+            </button>
+            <ChevronRight className="h-4 w-4 text-gray-400" />
+            <span className="text-sm font-medium text-gray-900">
+              {currentBoard.name}
+            </span>
+          </div>
+
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">

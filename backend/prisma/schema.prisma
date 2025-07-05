@@ -43,6 +43,18 @@ model Task {
   description String?
   position    Int
   columnId    String   @map("column_id")
+  
+  // New fields based on ClickUp
+  projectNumber String?  @map("project_number")
+  assignee     String?   // User who is responsible for the task
+  assigner     String?   // User who assigned the task
+  priority     Priority? @default(MEDIUM)
+  itemType     ItemType? @default(TASK)
+  initiative   String?   // Project/initiative name
+  estimateSize EstimateSize? @map("estimate_size")
+  deadline     DateTime?
+  tags         String[]  // Array of tags
+  
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
   
@@ -50,4 +62,29 @@ model Task {
   column Column @relation(fields: [columnId], references: [id], onDelete: Cascade)
   
   @@map("tasks")
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ItemType {
+  TASK
+  BUG
+  FEATURE
+  ENHANCEMENT
+  PRODUCT_A
+  PRODUCT_B
+}
+
+enum EstimateSize {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
 } 
