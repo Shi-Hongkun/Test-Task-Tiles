@@ -76,6 +76,10 @@ type BoardAction =
   | { type: 'REMOVE_COLUMN'; payload: string }
   | { type: 'ADD_TASK'; payload: Task }
   | { type: 'UPDATE_TASK'; payload: Task }
+  | {
+      type: 'OPTIMISTIC_UPDATE_TASK';
+      payload: { taskId: string; columnId: string; position: number };
+    }
   | { type: 'REMOVE_TASK'; payload: string };
 
 // Reducer
@@ -181,20 +185,89 @@ const boardReducer = (state: BoardState, action: BoardAction): BoardState => {
         },
       };
 
-    case 'UPDATE_TASK':
+    case 'OPTIMISTIC_UPDATE_TASK':
       if (!state.currentBoard) return state;
+
+      const { taskId, columnId, position } = action.payload;
+
       return {
         ...state,
         currentBoard: {
           ...state.currentBoard,
-          columns: state.currentBoard.columns.map((column) => ({
-            ...column,
-            tasks: column.tasks
-              .map((task) =>
-                task.id === action.payload.id ? action.payload : task
-              )
-              .filter((task) => task.columnId === column.id),
-          })),
+          columns: state.currentBoard.columns.map((column) => {
+            // Find and remove the task from all columns
+            const tasksWithoutTarget = column.tasks.filter(
+              (task) => task.id !== taskId
+            );
+
+            // If this is the target column, add the task at the new position
+            if (column.id === columnId) {
+              // Find the task from the original column to maintain its data
+              const targetTask = state
+                .currentBoard!.columns.flatMap((col) => col.tasks)
+                .find((task) => task.id === taskId);
+
+              if (targetTask) {
+                // Create updated task with new column and position
+                const updatedTask = {
+                  ...targetTask,
+                  columnId,
+                  position,
+                  updatedAt: new Date().toISOString(), // Optimistic timestamp
+                };
+
+                // Insert task at correct position
+                const tasksWithNew = [...tasksWithoutTarget, updatedTask];
+                tasksWithNew.sort((a, b) => a.position - b.position);
+
+                return {
+                  ...column,
+                  tasks: tasksWithNew,
+                };
+              }
+            }
+
+            // For other columns, just return tasks without the moved task
+            return {
+              ...column,
+              tasks: tasksWithoutTarget,
+            };
+          }),
+        },
+      };
+
+    case 'UPDATE_TASK':
+      if (!state.currentBoard) return state;
+
+      const updatedTask = action.payload;
+
+      return {
+        ...state,
+        currentBoard: {
+          ...state.currentBoard,
+          columns: state.currentBoard.columns.map((column) => {
+            // Remove the task from all columns first
+            const tasksWithoutUpdatedTask = column.tasks.filter(
+              (task) => task.id !== updatedTask.id
+            );
+
+            // If this is the target column, add the updated task
+            if (column.id === updatedTask.columnId) {
+              // Sort all tasks including the updated one by position
+              const allTasks = [...tasksWithoutUpdatedTask, updatedTask];
+              allTasks.sort((a, b) => a.position - b.position);
+              return {
+                ...column,
+                tasks: allTasks,
+              };
+            }
+
+            // For other columns, just return tasks without the updated task
+            return {
+              ...column,
+              tasks: tasksWithoutUpdatedTask,
+            };
+          }),
         },
       };
 
@@ -460,12 +533,29 @@ export const BoardProvider: React.FC<{ children: React.ReactNode }> = ({
     [setLoading, setError, handleApiError]
   );
 
+  // Optimistic update method
+  const optimisticUpdateTaskPosition = useCallback(
+    (taskId: string, columnId: string, position: number) => {
+      dispatch({
+        type: 'OPTIMISTIC_UPDATE_TASK',
+        payload: { taskId, columnId, position },
+      });
+    },
+    []
+  );
+
   const updateTaskPosition = useCallback(
     async (
       id: string,
       columnId: string,
       position: number
     ): Promise<Task | null> => {
+      // Store original state for potential rollback
+      const originalBoard = state.currentBoard;
+
+      // First, perform optimistic update for immediate UI feedback
+      optimisticUpdateTaskPosition(id, columnId, position);
+
       setLoading('updating', true);
       setError('updating', null);
       try {
@@ -474,16 +564,27 @@ export const BoardProvider: React.FC<{ children: React.ReactNode }> = ({
           columnId,
           position
         );
+        // Replace optimistic update with actual server response
         dispatch({ type: 'UPDATE_TASK', payload: task });
         return task;
       } catch (error) {
+        // Rollback optimistic update on error
+        if (originalBoard) {
+          dispatch({ type: 'SET_CURRENT_BOARD', payload: originalBoard });
+        }
         handleApiError(error, 'updating');
         return null;
       } finally {
         setLoading('updating', false);
       }
     },
-    [setLoading, setError, handleApiError]
+    [
+      setLoading,
+      setError,
+      handleApiError,
+      optimisticUpdateTaskPosition,
+      state.currentBoard,
+    ]
   );
 
   const deleteTask = useCallback(
