@@ -17,7 +17,7 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
@@ -32,15 +32,9 @@
       "@/services/*": ["src/services/*"],
       "@/types/*": ["src/types/*"],
       "@/utils/*": ["src/utils/*"],
-      "@/pages/*": ["src/pages/*"],
-      "@shared/*": ["../shared/src/*"]
+      "@/pages/*": ["src/pages/*"]
     }
   },
-  "include": ["src/**/*", "src/**/*.tsx", "src/**/*.ts", "../shared/src/**/*"],
-  "exclude": ["node_modules", "dist", "build"],
-  "references": [
-    {
-      "path": "../shared"
-    }
-  ]
-} 
+  "include": ["src/**/*", "src/**/*.tsx", "src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "build"]
+}

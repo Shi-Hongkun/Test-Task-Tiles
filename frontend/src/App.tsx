@@ -1,19 +1,21 @@
-import React from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { BoardsPage } from './pages/BoardsPage'
-import { BoardPage } from './pages/BoardPage'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BoardProvider } from './contexts/BoardContext';
+import { BoardsPage } from './pages/BoardsPage';
+import { BoardPage } from './pages/BoardPage';
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Routes>
-          <Route path="/" element={<BoardsPage />} />
-          <Route path="/board/:id" element={<BoardPage />} />
-        </Routes>
-      </div>
-    </Router>
-  )
+    <BoardProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50">
+          <Routes>
+            <Route path="/" element={<BoardsPage />} />
+            <Route path="/board/:id" element={<BoardPage />} />
+          </Routes>
+        </div>
+      </Router>
+    </BoardProvider>
+  );
 }
 
-export default App 
+export default App;
