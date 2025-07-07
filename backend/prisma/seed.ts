@@ -351,6 +351,350 @@ async function main() {
   console.log(
     `   - Done: ${hrTasks.filter((t) => t.columnId === doneColumn.id).length} tasks`
   );
+
+  // Create Wedding Planning Board
+  const weddingBoard = await prisma.board.create({
+    data: {
+      name: 'Emma & David Dream Wedding - August 16, 2025',
+      description:
+        'Premium wedding planning project for Emma Thompson & David Chen - Enchanted Garden Theme at Grand Hyatt Hotel',
+    },
+  });
+
+  // Create columns for wedding planning workflow
+  const weddingTodoColumn = await prisma.column.create({
+    data: {
+      name: 'To Do',
+      position: 1,
+      boardId: weddingBoard.id,
+    },
+  });
+
+  const weddingInProgressColumn = await prisma.column.create({
+    data: {
+      name: 'In Progress',
+      position: 2,
+      boardId: weddingBoard.id,
+    },
+  });
+
+  const weddingReviewColumn = await prisma.column.create({
+    data: {
+      name: 'Review',
+      position: 3,
+      boardId: weddingBoard.id,
+    },
+  });
+
+  const weddingDoneColumn = await prisma.column.create({
+    data: {
+      name: 'Done',
+      position: 4,
+      boardId: weddingBoard.id,
+    },
+  });
+
+  // Create comprehensive wedding planning tasks
+  const weddingTasks = [
+    // === VENUE & CATERING ===
+    {
+      title: 'Finalize Grand Hyatt Hotel Venue Contract',
+      description:
+        'Complete contract negotiations with Grand Hyatt Hotel for August 16th wedding ceremony and reception. Confirm garden terrace availability, capacity for 120 guests, and backup indoor options.',
+      position: 1,
+      columnId: weddingTodoColumn.id,
+      projectNumber: 'WED-2025-001',
+      assignee: 'Sarah Martinez',
+      assigner: 'Emma Thompson (Bride)',
+      priority: Priority.HIGH,
+      itemType: ItemType.TASK,
+      initiative: 'Venue & Catering',
+      estimateSize: EstimateSize.L,
+      startDate: new Date('2025-07-10'),
+      deadline: new Date('2025-07-15'),
+      tags: ['venue', 'contract', 'catering'],
+    },
+    {
+      title: 'Wedding Menu Tasting & Selection',
+      description:
+        'Schedule and attend wedding menu tasting session with Executive Chef. Select 3-course dinner menu, cocktail hour appetizers, and wedding cake flavors. Accommodate dietary restrictions.',
+      position: 2,
+      columnId: weddingInProgressColumn.id,
+      projectNumber: 'WED-2025-002',
+      assignee: 'Emma Thompson',
+      assigner: 'Sarah Martinez',
+      priority: Priority.URGENT,
+      itemType: ItemType.TASK,
+      initiative: 'Venue & Catering',
+      estimateSize: EstimateSize.M,
+      startDate: new Date('2025-07-08'),
+      deadline: new Date('2025-07-12'),
+      tags: ['menu', 'tasting', 'catering'],
+    },
+    {
+      title: 'Floral Arrangements & Centerpieces Design',
+      description:
+        'Work with florist to design enchanted garden theme floral arrangements. Create centerpieces with white roses, eucalyptus, and fairy lights. Plan bridal bouquet and boutonnieres.',
+      position: 3,
+      columnId: weddingReviewColumn.id,
+      projectNumber: 'WED-2025-003',
+      assignee: 'Isabella Rodriguez',
+      assigner: 'Sarah Martinez',
+      priority: Priority.MEDIUM,
+      itemType: ItemType.TASK,
+      initiative: 'Venue & Catering',
+      estimateSize: EstimateSize.L,
+      startDate: new Date('2025-07-12'),
+      deadline: new Date('2025-07-18'),
+      tags: ['flowers', 'centerpieces', 'design'],
+    },
+
+    // === PHOTOGRAPHY & VIDEOGRAPHY ===
+    {
+      title: 'Book Award-Winning Wedding Photographer',
+      description:
+        'Secure booking with Michael Chen Photography for full-day wedding coverage. Include engagement session, ceremony, reception, and next-day portraits. Confirm equipment and backup plans.',
+      position: 4,
+      columnId: weddingDoneColumn.id,
+      projectNumber: 'WED-2025-004',
+      assignee: 'David Chen',
+      assigner: 'Emma Thompson (Bride)',
+      priority: Priority.HIGH,
+      itemType: ItemType.TASK,
+      initiative: 'Photography & Videography',
+      estimateSize: EstimateSize.M,
+      startDate: new Date('2025-07-01'),
+      deadline: new Date('2025-07-05'),
+      tags: ['photography', 'booking', 'completed'],
+    },
+    {
+      title: 'Videography & Drone Footage Planning',
+      description:
+        'Coordinate with videographer for cinematic wedding video production. Plan drone footage for outdoor ceremony, reception highlights, and couple portraits. Obtain necessary permits.',
+      position: 5,
+      columnId: weddingInProgressColumn.id,
+      projectNumber: 'WED-2025-005',
+      assignee: 'Sarah Martinez',
+      assigner: 'David Chen',
+      priority: Priority.MEDIUM,
+      itemType: ItemType.TASK,
+      initiative: 'Photography & Videography',
+      estimateSize: EstimateSize.L,
+      startDate: new Date('2025-07-15'),
+      deadline: new Date('2025-07-20'),
+      tags: ['videography', 'drone', 'permits'],
+    },
+
+    // === ATTIRE & BEAUTY ===
+    {
+      title: 'Wedding Dress Final Fitting & Alterations',
+      description:
+        'Schedule final fitting appointment at Vera Wang Bridal for custom wedding dress. Complete final alterations, bustle attachment, and accessory coordination. Confirm pickup date.',
+      position: 6,
+      columnId: weddingTodoColumn.id,
+      projectNumber: 'WED-2025-006',
+      assignee: 'Emma Thompson',
+      assigner: 'Sarah Martinez',
+      priority: Priority.HIGH,
+      itemType: ItemType.TASK,
+      initiative: 'Attire & Beauty',
+      estimateSize: EstimateSize.M,
+      startDate: new Date('2025-07-20'),
+      deadline: new Date('2025-07-25'),
+      tags: ['dress', 'fitting', 'alterations'],
+    },
+    {
+      title: 'Groom Tuxedo & Groomsmen Attire',
+      description:
+        'Coordinate tuxedo rental for groom and 6 groomsmen from Hugo Boss. Schedule fitting appointments, select accessories, and confirm pickup/return dates. Ensure color coordination.',
+      position: 7,
+      columnId: weddingInProgressColumn.id,
+      projectNumber: 'WED-2025-007',
+      assignee: 'David Chen',
+      assigner: 'Emma Thompson (Bride)',
+      priority: Priority.MEDIUM,
+      itemType: ItemType.TASK,
+      initiative: 'Attire & Beauty',
+      estimateSize: EstimateSize.L,
+      startDate: new Date('2025-07-10'),
+      deadline: new Date('2025-07-15'),
+      tags: ['tuxedo', 'groomsmen', 'rental'],
+    },
+    {
+      title: 'Bridal Hair & Makeup Trial',
+      description:
+        'Schedule trial session with celebrity makeup artist and hair stylist. Test wedding day looks, take photos for reference, and finalize timeline for wedding morning preparation.',
+      position: 8,
+      columnId: weddingReviewColumn.id,
+      projectNumber: 'WED-2025-008',
+      assignee: 'Emma Thompson',
+      assigner: 'Sarah Martinez',
+      priority: Priority.MEDIUM,
+      itemType: ItemType.TASK,
+      initiative: 'Attire & Beauty',
+      estimateSize: EstimateSize.S,
+      startDate: new Date('2025-07-18'),
+      deadline: new Date('2025-07-22'),
+      tags: ['makeup', 'hair', 'trial'],
+    },
+
+    // === MUSIC & ENTERTAINMENT ===
+    {
+      title: 'Live Jazz Band Booking for Ceremony',
+      description:
+        'Book "The Harmony Quartet" jazz band for ceremony and cocktail hour. Confirm song list including processional, recessional, and special requests. Coordinate sound equipment needs.',
+      position: 9,
+      columnId: weddingDoneColumn.id,
+      projectNumber: 'WED-2025-009',
+      assignee: 'Michael Torres',
+      assigner: 'David Chen',
+      priority: Priority.HIGH,
+      itemType: ItemType.TASK,
+      initiative: 'Music & Entertainment',
+      estimateSize: EstimateSize.M,
+      startDate: new Date('2025-06-28'),
+      deadline: new Date('2025-07-03'),
+      tags: ['music', 'jazz-band', 'completed'],
+    },
+    {
+      title: 'DJ & Sound System Setup for Reception',
+      description:
+        'Coordinate with DJ Alex Rodriguez for reception entertainment. Finalize playlist, set up wireless microphones, and plan special lighting effects. Include backup equipment.',
+      position: 10,
+      columnId: weddingInProgressColumn.id,
+      projectNumber: 'WED-2025-010',
+      assignee: 'Sarah Martinez',
+      assigner: 'Michael Torres',
+      priority: Priority.MEDIUM,
+      itemType: ItemType.TASK,
+      initiative: 'Music & Entertainment',
+      estimateSize: EstimateSize.L,
+      startDate: new Date('2025-07-20'),
+      deadline: new Date('2025-07-25'),
+      tags: ['dj', 'sound-system', 'lighting'],
+    },
+
+    // === INVITATIONS & STATIONERY ===
+    {
+      title: 'Wedding Invitations Design & Printing',
+      description:
+        'Design and print 130 elegant wedding invitations with RSVP cards. Include venue map, accommodation details, and wedding website information. Coordinate with calligrapher for addressing.',
+      position: 11,
+      columnId: weddingTodoColumn.id,
+      projectNumber: 'WED-2025-011',
+      assignee: 'Isabella Rodriguez',
+      assigner: 'Emma Thompson (Bride)',
+      priority: Priority.HIGH,
+      itemType: ItemType.TASK,
+      initiative: 'Invitations & Stationery',
+      estimateSize: EstimateSize.M,
+      startDate: new Date('2025-07-15'),
+      deadline: new Date('2025-07-20'),
+      tags: ['invitations', 'printing', 'design'],
+    },
+    {
+      title: 'Guest List Management & RSVPs',
+      description:
+        'Manage guest list database, track RSVP responses, and coordinate with caterer for final headcount. Handle dietary restrictions and special accommodation requests.',
+      position: 12,
+      columnId: weddingInProgressColumn.id,
+      projectNumber: 'WED-2025-012',
+      assignee: 'Sarah Martinez',
+      assigner: 'Emma Thompson (Bride)',
+      priority: Priority.URGENT,
+      itemType: ItemType.TASK,
+      initiative: 'Invitations & Stationery',
+      estimateSize: EstimateSize.L,
+      startDate: new Date('2025-07-05'),
+      deadline: new Date('2025-07-10'),
+      tags: ['guest-list', 'rsvp', 'coordination'],
+    },
+
+    // === TRANSPORTATION & LOGISTICS ===
+    {
+      title: 'Luxury Transportation for Wedding Party',
+      description:
+        'Arrange luxury transportation for bride, groom, and wedding party. Book vintage Rolls Royce for couple and luxury SUVs for bridal party. Coordinate pickup/drop-off schedule.',
+      position: 13,
+      columnId: weddingReviewColumn.id,
+      projectNumber: 'WED-2025-013',
+      assignee: 'Michael Torres',
+      assigner: 'David Chen',
+      priority: Priority.MEDIUM,
+      itemType: ItemType.TASK,
+      initiative: 'Transportation & Logistics',
+      estimateSize: EstimateSize.M,
+      startDate: new Date('2025-07-25'),
+      deadline: new Date('2025-07-30'),
+      tags: ['transportation', 'luxury', 'logistics'],
+    },
+    {
+      title: 'Wedding Day Timeline & Coordination',
+      description:
+        'Create detailed wedding day timeline coordinating all vendors, wedding party, and family members. Include buffer time, backup plans, and emergency contacts.',
+      position: 14,
+      columnId: weddingTodoColumn.id,
+      projectNumber: 'WED-2025-014',
+      assignee: 'Sarah Martinez',
+      assigner: 'Emma Thompson (Bride)',
+      priority: Priority.HIGH,
+      itemType: ItemType.FEATURE,
+      initiative: 'Transportation & Logistics',
+      estimateSize: EstimateSize.XL,
+      startDate: new Date('2025-07-30'),
+      deadline: new Date('2025-08-05'),
+      tags: ['timeline', 'coordination', 'planning'],
+    },
+
+    // === SPECIAL TOUCHES ===
+    {
+      title: 'Custom Wedding Favors & Gift Bags',
+      description:
+        'Design and create personalized wedding favors for guests. Include custom candles, local honey, and thank you notes. Prepare welcome bags for out-of-town guests.',
+      position: 15,
+      columnId: weddingDoneColumn.id,
+      projectNumber: 'WED-2025-015',
+      assignee: 'Isabella Rodriguez',
+      assigner: 'Sarah Martinez',
+      priority: Priority.LOW,
+      itemType: ItemType.ENHANCEMENT,
+      initiative: 'Special Touches',
+      estimateSize: EstimateSize.M,
+      startDate: new Date('2025-06-30'),
+      deadline: new Date('2025-07-05'),
+      tags: ['favors', 'gifts', 'completed'],
+    },
+  ];
+
+  // Create all wedding tasks
+  for (const task of weddingTasks) {
+    await prisma.task.create({
+      data: task,
+    });
+  }
+
+  console.log('💒 Wedding Planning seed completed!');
+  console.log(
+    `✅ Created 1 board with 4 columns and ${weddingTasks.length} tasks`
+  );
+  console.log('📊 Task distribution:');
+  console.log(
+    `   - To Do: ${weddingTasks.filter((t) => t.columnId === weddingTodoColumn.id).length} tasks`
+  );
+  console.log(
+    `   - In Progress: ${weddingTasks.filter((t) => t.columnId === weddingInProgressColumn.id).length} tasks`
+  );
+  console.log(
+    `   - Review: ${weddingTasks.filter((t) => t.columnId === weddingReviewColumn.id).length} tasks`
+  );
+  console.log(
+    `   - Done: ${weddingTasks.filter((t) => t.columnId === weddingDoneColumn.id).length} tasks`
+  );
+
+  console.log('\n🌟 All seed data completed!');
+  console.log(
+    `📋 Total: 2 boards, 8 columns, ${hrTasks.length + weddingTasks.length} tasks`
+  );
 }
 
 main()
