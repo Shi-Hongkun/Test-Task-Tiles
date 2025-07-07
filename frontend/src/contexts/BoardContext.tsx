@@ -3,6 +3,7 @@ import React, {
   useContext,
   useReducer,
   useCallback,
+  useRef,
 } from 'react';
 import {
   BoardContextValue,
@@ -304,10 +305,22 @@ const BoardContext = createContext<BoardContextValue | undefined>(undefined);
 export const BoardProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  // 暂时移除渲染日志
+  // console.log('🏗️ BoardProvider render');
   const [state, dispatch] = useReducer(boardReducer, initialState);
+
+  // Use ref to store current board to avoid useCallback dependencies
+  const currentBoardRef = useRef<BoardWithFullData | null>(null);
+
+  // Update ref when state changes
+  React.useEffect(() => {
+    currentBoardRef.current = state.currentBoard;
+  }, [state.currentBoard]);
 
   // Utility functions
   const setLoading = useCallback((key: keyof LoadingState, value: boolean) => {
+    // 暂时移除日志以减少噪音
+    // console.log(`🔧 setLoading called: ${key} = ${value}`);
     dispatch({ type: 'SET_LOADING', payload: { key, value } });
   }, []);
 
@@ -352,18 +365,36 @@ export const BoardProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchBoard = useCallback(
     async (id: string) => {
-      setLoading('board', true);
-      setError('board', null);
+      console.log('🔄 fetchBoard called for id:', id);
+      dispatch({ type: 'SET_LOADING', payload: { key: 'board', value: true } });
+      dispatch({ type: 'SET_ERROR', payload: { key: 'board', value: null } });
       try {
+        console.log('📡 Making API call for board:', id);
         const board = await boardService.getBoardWithFullData(id);
+        console.log('✅ API call successful, setting board:', board.id);
         dispatch({ type: 'SET_CURRENT_BOARD', payload: board });
       } catch (error) {
-        handleApiError(error, 'board');
+        console.log('❌ API call failed:', error);
+        const message =
+          error instanceof ApiError
+            ? error.message
+            : error instanceof Error
+              ? error.message
+              : 'An unexpected error occurred';
+        dispatch({
+          type: 'SET_ERROR',
+          payload: { key: 'board', value: message },
+        });
+        console.error(`API Error (board):`, error);
       } finally {
-        setLoading('board', false);
+        console.log('🏁 Setting loading to false for board:', id);
+        dispatch({
+          type: 'SET_LOADING',
+          payload: { key: 'board', value: false },
+        });
       }
     },
-    [setLoading, setError, handleApiError]
+    [] // 移除所有依赖，避免循环依赖
   );
 
   const createBoard = useCallback(
@@ -463,10 +494,8 @@ export const BoardProvider: React.FC<{ children: React.ReactNode }> = ({
       setError('updating', null);
       try {
         const column = await columnService.updateColumnPosition(id, position);
-        // Refresh board to get updated positions
-        if (state.currentBoard) {
-          await fetchBoard(state.currentBoard.id);
-        }
+        // 暂时移除自动重新获取board的逻辑，避免状态混乱
+        // 用户可以手动刷新页面或重新导航来更新
         return column;
       } catch (error) {
         handleApiError(error, 'updating');
@@ -475,7 +504,7 @@ export const BoardProvider: React.FC<{ children: React.ReactNode }> = ({
         setLoading('updating', false);
       }
     },
-    [setLoading, setError, handleApiError, state.currentBoard, fetchBoard]
+    [setLoading, setError, handleApiError]
   );
 
   const deleteColumn = useCallback(
@@ -550,8 +579,8 @@ export const BoardProvider: React.FC<{ children: React.ReactNode }> = ({
       columnId: string,
       position: number
     ): Promise<Task | null> => {
-      // Store original state for potential rollback
-      const originalBoard = state.currentBoard;
+      // 使用 ref 来获取当前 board，避免循环依赖
+      const originalBoard = currentBoardRef.current;
 
       // First, perform optimistic update for immediate UI feedback
       optimisticUpdateTaskPosition(id, columnId, position);
@@ -578,13 +607,7 @@ export const BoardProvider: React.FC<{ children: React.ReactNode }> = ({
         setLoading('updating', false);
       }
     },
-    [
-      setLoading,
-      setError,
-      handleApiError,
-      optimisticUpdateTaskPosition,
-      state.currentBoard,
-    ]
+    [setLoading, setError, handleApiError, optimisticUpdateTaskPosition] // 移除对 state 的依赖
   );
 
   const deleteTask = useCallback(

@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { BoardProvider } from './contexts/BoardContext';
+// import { ViewProvider } from './contexts/ViewContext';
 import { BoardsPage } from './pages/BoardsPage';
 import { BoardPage } from './pages/BoardPage';
 

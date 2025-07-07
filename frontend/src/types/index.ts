@@ -99,6 +99,7 @@ export interface Task {
   itemType?: ItemType;
   initiative?: string;
   estimateSize?: EstimateSize;
+  startDate?: string;
   deadline?: string;
   tags?: string[];
 
@@ -120,6 +121,7 @@ export interface CreateTaskRequest {
   itemType?: ItemType;
   initiative?: string;
   estimateSize?: EstimateSize;
+  startDate?: string;
   deadline?: string;
   tags?: string[];
 }
@@ -138,6 +140,7 @@ export interface UpdateTaskRequest {
   itemType?: ItemType;
   initiative?: string;
   estimateSize?: EstimateSize;
+  startDate?: string;
   deadline?: string;
   tags?: string[];
 }
@@ -199,7 +202,7 @@ export interface ColumnFormData {
 
 export interface TaskFormData {
   title: string;
-  description: string;
+  description?: string;
   projectNumber?: string;
   assignee?: string;
   assigner?: string;
@@ -207,6 +210,7 @@ export interface TaskFormData {
   itemType?: ItemType;
   initiative?: string;
   estimateSize?: EstimateSize;
+  startDate?: string;
   deadline?: string;
   tags?: string[];
 }
@@ -266,4 +270,95 @@ export interface BoardContextValue {
   // Utility functions
   clearErrors: () => void;
   setLoading: (key: keyof LoadingState, value: boolean) => void;
+}
+
+// ===== VIEW SYSTEM TYPES =====
+
+export enum ViewType {
+  BOARD = 'board',
+  LIST = 'list',
+  CALENDAR = 'calendar',
+  TIMELINE = 'timeline',
+}
+
+export interface ViewConfig {
+  type: ViewType;
+  label: string;
+  icon: string;
+  description: string;
+}
+
+export interface ViewSettings {
+  sortBy?:
+    | 'title'
+    | 'priority'
+    | 'deadline'
+    | 'assignee'
+    | 'created'
+    | 'updated';
+  sortOrder?: 'asc' | 'desc';
+  groupBy?: 'column' | 'priority' | 'assignee' | 'project';
+  showCompleted?: boolean;
+  showDescription?: boolean;
+  dateRange?: {
+    start: Date;
+    end: Date;
+  };
+}
+
+export interface ViewState {
+  currentView: ViewType;
+  settings: ViewSettings;
+  isLoading: boolean;
+}
+
+export interface ViewContextValue {
+  viewState: ViewState;
+  setView: (view: ViewType) => void;
+  updateSettings: (settings: Partial<ViewSettings>) => void;
+  resetSettings: () => void;
+}
+
+// List View specific types
+export interface TaskListItem extends Task {
+  columnName: string;
+  isOverdue: boolean;
+  daysToDue?: number;
+}
+
+export interface ListViewColumn {
+  key: keyof TaskListItem | 'actions';
+  label: string;
+  sortable: boolean;
+  width?: string;
+  align?: 'left' | 'center' | 'right';
+}
+
+// Calendar View specific types
+export interface CalendarTask extends Task {
+  columnName: string;
+  date: Date;
+  isStart: boolean; // true for start date, false for deadline
+}
+
+export interface CalendarDay {
+  date: Date;
+  isCurrentMonth: boolean;
+  isToday: boolean;
+  tasks: CalendarTask[];
+}
+
+// Timeline View specific types
+export interface TimelineTask extends Omit<Task, 'startDate'> {
+  columnName: string;
+  startDate: Date;
+  endDate: Date;
+  duration: number; // in days
+  progress: number; // 0-100
+}
+
+export interface TimelineRow {
+  title: string;
+  tasks: TimelineTask[];
+  isExpanded?: boolean;
 }

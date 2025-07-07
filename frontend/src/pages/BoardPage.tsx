@@ -1,16 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Home, ChevronRight, Plus } from 'lucide-react';
 import { useBoardContext } from '../contexts/BoardContext';
-import { Task, ColumnWithTasks, TaskFormData, ColumnFormData } from '../types';
+// import { useViewContext } from '../contexts/ViewContext';
+import {
+  Task,
+  ColumnWithTasks,
+  TaskFormData,
+  ColumnFormData,
+  ViewType,
+} from '../types';
 import { BoardView } from '../components/BoardView';
+import { ViewSwitcher, ViewInfo } from '../components/ViewSwitcher';
 import { TaskForm, ColumnForm } from '../components/forms';
 
-export const BoardPage: React.FC = () => {
+// Import placeholder components (will be implemented next)
+const ListView = React.lazy(() => import('../components/views/ListView'));
+const CalendarView = React.lazy(
+  () => import('../components/views/CalendarView')
+);
+const TimelineView = React.lazy(
+  () => import('../components/views/TimelineView')
+);
+
+// Main board content component
+const BoardPageContent: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  // Temporarily remove ViewContext usage
   const {
     currentBoard,
     loading,
+    fetchBoard,
     createColumn,
     updateColumn,
     deleteColumn,
@@ -18,6 +39,9 @@ export const BoardPage: React.FC = () => {
     updateTask,
     deleteTask,
   } = useBoardContext();
+
+  // 简化的状态管理，移除可能导致循环的逻辑
+  const [currentBoardId, setCurrentBoardId] = useState<string | null>(null);
 
   // Modal states
   const [showCreateColumn, setShowCreateColumn] = useState(false);
@@ -31,6 +55,15 @@ export const BoardPage: React.FC = () => {
   );
   const [currentTask, setCurrentTask] = useState<Task | null>(null);
   const [currentTaskColumnId, setCurrentTaskColumnId] = useState<string>('');
+
+  // 简化的数据获取逻辑
+  useEffect(() => {
+    if (id && id !== currentBoardId) {
+      console.log('📥 Fetching board with id:', id);
+      setCurrentBoardId(id);
+      fetchBoard(id);
+    }
+  }, [id, currentBoardId]); // 使用更简单的依赖管理
 
   if (!id) {
     return (
@@ -56,30 +89,7 @@ export const BoardPage: React.FC = () => {
   };
 
   const handleDeleteColumn = async (columnId: string) => {
-    if (
-      window.confirm(
-        'Are you sure you want to delete this column? All tasks in this column will be lost.'
-      )
-    ) {
-      await deleteColumn(columnId);
-    }
-  };
-
-  const handleCreateColumnSubmit = async (formData: ColumnFormData) => {
-    if (currentBoard) {
-      await createColumn({
-        name: formData.name,
-        boardId: currentBoard.id,
-      });
-    }
-  };
-
-  const handleUpdateColumnSubmit = async (formData: ColumnFormData) => {
-    if (currentColumn) {
-      await updateColumn(currentColumn.id, {
-        name: formData.name,
-      });
-    }
+    await deleteColumn(columnId);
   };
 
   // Task handlers
@@ -94,8 +104,26 @@ export const BoardPage: React.FC = () => {
   };
 
   const handleDeleteTask = async (taskId: string) => {
-    if (window.confirm('Are you sure you want to delete this task?')) {
-      await deleteTask(taskId);
+    await deleteTask(taskId);
+  };
+
+  // Form submit handlers
+  const handleCreateColumnSubmit = async (formData: ColumnFormData) => {
+    if (currentBoard) {
+      const createColumnData = {
+        name: formData.name,
+        boardId: currentBoard.id,
+      };
+      await createColumn(createColumnData);
+    }
+  };
+
+  const handleUpdateColumnSubmit = async (formData: ColumnFormData) => {
+    if (currentColumn) {
+      const updateColumnData = {
+        name: formData.name,
+      };
+      await updateColumn(currentColumn.id, updateColumnData);
     }
   };
 
@@ -103,8 +131,8 @@ export const BoardPage: React.FC = () => {
     if (currentTaskColumnId) {
       const createTaskData = {
         title: formData.title,
-        columnId: currentTaskColumnId,
         ...(formData.description && { description: formData.description }),
+        columnId: currentTaskColumnId,
         ...(formData.projectNumber && {
           projectNumber: formData.projectNumber,
         }),
@@ -114,6 +142,7 @@ export const BoardPage: React.FC = () => {
         ...(formData.itemType && { itemType: formData.itemType }),
         ...(formData.initiative && { initiative: formData.initiative }),
         ...(formData.estimateSize && { estimateSize: formData.estimateSize }),
+        ...(formData.startDate && { startDate: formData.startDate }),
         ...(formData.deadline && { deadline: formData.deadline }),
         ...(formData.tags && { tags: formData.tags }),
       };
@@ -141,6 +170,9 @@ export const BoardPage: React.FC = () => {
         ...(formData.estimateSize !== undefined && {
           estimateSize: formData.estimateSize,
         }),
+        ...(formData.startDate !== undefined && {
+          startDate: formData.startDate,
+        }),
         ...(formData.deadline !== undefined && { deadline: formData.deadline }),
         ...(formData.tags !== undefined && { tags: formData.tags }),
       };
@@ -164,20 +196,113 @@ export const BoardPage: React.FC = () => {
     setCurrentTaskColumnId('');
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <BoardView
-        boardId={id}
-        onCreateColumn={handleCreateColumn}
-        onEditColumn={handleEditColumn}
-        onDeleteColumn={handleDeleteColumn}
-        onCreateTask={handleCreateTask}
-        onEditTask={handleEditTask}
-        onDeleteTask={handleDeleteTask}
-        onNavigateHome={handleNavigateHome}
-      />
+  console.log(
+    '🎨 BoardPage render - loading:',
+    loading.board,
+    'currentBoard:',
+    !!currentBoard,
+    'id:',
+    id
+  );
 
-      {/* Create Column Modal */}
+  // Loading state
+  if (loading.board) {
+    console.log('⏳ Showing loading state');
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading board...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Board not found
+  if (!currentBoard) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">Board not found</p>
+          <button
+            onClick={() => window.history.back()}
+            className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-button"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Common props for all views
+  const commonViewProps = {
+    boardId: id,
+    onCreateColumn: handleCreateColumn,
+    onEditColumn: handleEditColumn,
+    onDeleteColumn: handleDeleteColumn,
+    onCreateTask: handleCreateTask,
+    onEditTask: handleEditTask,
+    onDeleteTask: handleDeleteTask,
+    onNavigateHome: handleNavigateHome,
+  };
+
+  // Temporarily disable multi-view, only render BoardView
+  const renderCurrentView = () => {
+    return <BoardView {...commonViewProps} />;
+  };
+
+  return (
+    <div className="h-full flex flex-col bg-surface-50">
+      {/* Board Header */}
+      <div className="flex-shrink-0 bg-white border-b border-gray-200 shadow-sm">
+        <div className="p-6">
+          {/* Breadcrumb Navigation */}
+          <div className="flex items-center gap-2 mb-4">
+            <button
+              onClick={handleNavigateHome}
+              className="flex items-center gap-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 px-2 py-1 rounded-button transition-all"
+            >
+              <Home className="h-4 w-4" />
+              <span className="text-sm font-medium">Home</span>
+            </button>
+            <ChevronRight className="h-4 w-4 text-gray-400" />
+            <span className="text-sm font-medium text-gray-900">
+              {currentBoard.name}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
+                {currentBoard.name}
+              </h1>
+              {currentBoard.description && (
+                <p className="text-gray-600 text-sm md:text-base">
+                  {currentBoard.description}
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 md:gap-4">
+              {/* Add Column Button - responsive */}
+              <button
+                onClick={handleCreateColumn}
+                className="bg-primary-500 hover:bg-primary-600 text-white px-3 md:px-4 py-2 rounded-button font-medium shadow-sm hover:shadow transition-all flex items-center gap-1 md:gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                <span className="hidden sm:inline">Add Column</span>
+                <span className="sm:hidden">Add</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* View Content */}
+      <div className="flex-1 overflow-hidden">{renderCurrentView()}</div>
+
+      {/* Modals */}
       <ColumnForm
         isOpen={showCreateColumn}
         onClose={handleCloseModals}
@@ -185,7 +310,6 @@ export const BoardPage: React.FC = () => {
         isLoading={loading.creating}
       />
 
-      {/* Edit Column Modal */}
       <ColumnForm
         isOpen={showEditColumn}
         onClose={handleCloseModals}
@@ -194,7 +318,6 @@ export const BoardPage: React.FC = () => {
         isLoading={loading.updating}
       />
 
-      {/* Create Task Modal */}
       <TaskForm
         isOpen={showCreateTask}
         onClose={handleCloseModals}
@@ -202,7 +325,6 @@ export const BoardPage: React.FC = () => {
         isLoading={loading.creating}
       />
 
-      {/* Edit Task Modal */}
       <TaskForm
         isOpen={showEditTask}
         onClose={handleCloseModals}
@@ -210,6 +332,17 @@ export const BoardPage: React.FC = () => {
         task={currentTask}
         isLoading={loading.updating}
       />
+
+      {/* Development View Info - temporarily disabled */}
+    </div>
+  );
+};
+
+// Main page component - ViewProvider is already in App.tsx
+export const BoardPage: React.FC = () => {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <BoardPageContent />
     </div>
   );
 };

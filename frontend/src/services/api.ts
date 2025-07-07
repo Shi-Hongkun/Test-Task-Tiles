@@ -1,8 +1,7 @@
 import { ApiResponse } from '../types';
 
 // API Configuration
-const API_BASE_URL =
-  import.meta.env?.VITE_API_URL || 'http://localhost:3002/api';
+const API_BASE_URL = import.meta.env?.VITE_API_URL || '/api';
 
 // Generic API Error class
 export class ApiError extends Error {
@@ -107,7 +106,8 @@ export const handleApiResponse = <T>(response: ApiResponse<T>): T => {
 // Health check utility
 export const checkApiHealth = async (): Promise<boolean> => {
   try {
-    const response = await fetch(`http://localhost:3002/health`);
+    // Health check is at /health not /api/health
+    const response = await fetch('/health');
     const data = await response.json();
     return data.status === 'OK' && data.database === 'connected';
   } catch {
