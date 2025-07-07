@@ -216,6 +216,130 @@ Advanced Features:
 └── Integrations: External tool connections
 ```
 
+## 🚀 **Phase 13: 极简用户系统 (最后2小时)**
+
+**优先级: CRITICAL** | **时间: 1.2小时** | **影响: DEMO成功**
+
+### 🎯 **产品需求**
+
+3个用户账号用于demo展示：
+
+1. **Emma Thompson** - HR Manager & Bride
+   - 可访问：HR Department Board + Wedding Planning Board
+   - 角色：既是HR又是新娘
+   - 头像：👰‍♀️
+
+2. **David Chen** - Groom
+   - 可访问：Wedding Planning Board
+   - 角色：新郎
+   - 头像：🤵‍♂️
+
+3. **Yilian Cheng** - HR Colleague
+   - 可访问：HR Department Board
+   - 角色：Emma的同事
+   - 头像：👩‍💼
+
+### 🛠️ **技术实现方案**
+
+**方案D：混合方案（时间优化）**
+
+```typescript
+// 数据库层 (15分钟)
+model User {
+  id     String @id @default(cuid())
+  name   String
+  email  String @unique
+  role   String
+  avatar String
+  boards Board[]
+}
+
+model Board {
+  // 现有字段...
+  ownerId String @map("owner_id")
+  owner   User   @relation(fields: [ownerId], references: [id])
+}
+
+// API层 (30分钟)
+GET /api/users              // 获取所有用户
+GET /api/boards?userId=xxx  // 根据用户过滤boards
+
+// 前端层 (30分钟)
+<UserSwitcher />           // 顶部用户切换组件
+BoardContext + 用户过滤     // 支持用户切换
+```
+
+### 📊 **用户权限映射**
+
+```typescript
+const userBoardAccess = {
+  'emma-thompson': ['hr-board', 'wedding-board'],
+  'david-chen': ['wedding-board'],
+  'yilian-cheng': ['hr-board'],
+};
+```
+
+### ⚡ **实施计划**
+
+1. **数据库更新** (15分钟)
+   - 添加User模型
+   - 修改Board模型添加owner关联
+   - 更新种子数据
+
+2. **后端API** (30分钟)
+   - 实现用户列表API
+   - 修改boards API支持用户过滤
+   - 测试API响应
+
+3. **前端实现** (30分钟)
+   - 创建用户切换组件
+   - 修改BoardContext支持用户过滤
+   - 集成到主界面
+
+4. **测试优化** (15分钟)
+   - 验证3个用户访问权限
+   - UI/UX最终调整
+   - Demo演练
+
+### 🎨 **UI设计**
+
+```jsx
+// 顶部导航栏
+<Header>
+  <Logo />
+  <UserSwitcher
+    users={users}
+    currentUser={currentUser}
+    onSwitch={handleUserSwitch}
+  />
+</Header>
+
+// 用户切换器
+<UserSwitcher>
+  <Avatar>{currentUser.avatar}</Avatar>
+  <UserDropdown>
+    {users.map(user => (
+      <UserOption key={user.id}>
+        <Avatar>{user.avatar}</Avatar>
+        <UserInfo>
+          <Name>{user.name}</Name>
+          <Role>{user.role}</Role>
+        </UserInfo>
+      </UserOption>
+    ))}
+  </UserDropdown>
+</UserSwitcher>
+```
+
+### 🔥 **Demo效果**
+
+1. **初始状态**：Emma Thompson登录，看到2个boards
+2. **切换到David**：只看到Wedding Planning Board
+3. **切换到Yilian**：只看到HR Department Board
+4. **回到Emma**：展示跨领域工作场景
+
+**预期Demo时长**：2-3分钟展示用户切换和权限系统
+
 ## Technical Architecture Evolution
 
 ### Current Tech Stack

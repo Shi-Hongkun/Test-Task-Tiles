@@ -16,13 +16,43 @@ async function main() {
   await prisma.task.deleteMany();
   await prisma.column.deleteMany();
   await prisma.board.deleteMany();
+  await prisma.user.deleteMany();
 
-  // Create HR Department Board
+  // Create users first
+  const emmaUser = await prisma.user.create({
+    data: {
+      name: 'Emma Thompson',
+      email: 'emma@techstart.com',
+      role: 'HR Manager & Bride',
+      avatar: '👰‍♀️',
+    },
+  });
+
+  const davidUser = await prisma.user.create({
+    data: {
+      name: 'David Chen',
+      email: 'david@example.com',
+      role: 'Groom',
+      avatar: '🤵‍♂️',
+    },
+  });
+
+  const yilianUser = await prisma.user.create({
+    data: {
+      name: 'Yilian Cheng',
+      email: 'yilian@techstart.com',
+      role: 'HR Colleague',
+      avatar: '👩‍💼',
+    },
+  });
+
+  // Create HR Department Board (Emma + Yilian can access)
   const hrBoard = await prisma.board.create({
     data: {
       name: 'HR Department - Q3 2025',
       description:
         'Human Resources management for TechStart Inc. - Recruitment & People Operations',
+      ownerId: emmaUser.id,
     },
   });
 
@@ -352,12 +382,13 @@ async function main() {
     `   - Done: ${hrTasks.filter((t) => t.columnId === doneColumn.id).length} tasks`
   );
 
-  // Create Wedding Planning Board
+  // Create Wedding Planning Board (Emma + David can access)
   const weddingBoard = await prisma.board.create({
     data: {
       name: 'Emma & David Dream Wedding - August 16, 2025',
       description:
-        'Premium wedding planning project for Emma Thompson & David Chen - Enchanted Garden Theme at Grand Hyatt Hotel',
+        'Complete wedding planning checklist - From venue to honeymoon',
+      ownerId: davidUser.id,
     },
   });
 

@@ -9,9 +9,10 @@ import {
 
 export const boardService = {
   // Get all boards
-  async getAllBoards(): Promise<Board[]> {
-    const response = await httpClient.get<Board[]>('/boards');
-    return handleApiResponse(response);
+  async getAllBoards(userId?: string): Promise<Board[]> {
+    const endpoint = userId ? `/boards?userId=${userId}` : '/boards';
+    const response = await httpClient.get<Board[]>(endpoint);
+    return response.data || [];
   },
 
   // Get board by ID

@@ -12,8 +12,64 @@ export class BoardService {
   async getAllBoards(): Promise<BoardDto[]> {
     const boards = await prisma.board.findMany({
       orderBy: { createdAt: 'desc' },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
+        },
+      },
     });
     return boards as any;
+  }
+
+  // Get boards for a specific user (with access control)
+  async getBoardsForUser(userId: string): Promise<BoardDto[]> {
+    // 获取用户信息
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, name: true, email: true },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // 根据用户权限过滤boards
+    const allBoards = await prisma.board.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+
+    // 实现用户权限逻辑
+    const accessibleBoards = allBoards.filter((board) => {
+      // Emma Thompson - 可以访问所有boards (HR + Wedding)
+      if (user.email === 'emma@techstart.com') {
+        return true;
+      }
+      // David Chen - 只能访问Wedding board
+      else if (user.email === 'david@example.com') {
+        return board.name.includes('Wedding');
+      }
+      // Yilian Cheng - 只能访问HR board
+      else if (user.email === 'yilian@techstart.com') {
+        return board.name.includes('HR Department');
+      }
+
+      return false;
+    });
+
+    return accessibleBoards as any;
   }
 
   // Get board by ID

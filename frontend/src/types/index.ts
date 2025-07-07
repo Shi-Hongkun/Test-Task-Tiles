@@ -267,3 +267,19 @@ export interface BoardContextValue {
   clearErrors: () => void;
   setLoading: (key: keyof LoadingState, value: boolean) => void;
 }
+
+// User Types
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  avatar: string;
+}
+
+export interface UserContextValue {
+  currentUser: User | null;
+  users: User[];
+  switchUser: (userId: string) => void;
+  loading: boolean;
+}

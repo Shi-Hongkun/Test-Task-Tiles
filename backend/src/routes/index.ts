@@ -2,10 +2,14 @@ import { Router } from 'express';
 import boardRoutes from './boardRoutes';
 import columnRoutes from './columnRoutes';
 import taskRoutes from './taskRoutes';
+import userRoutes from './userRoutes';
 import { columnController } from '../controllers/columnController';
 import { taskController } from '../controllers/taskController';
 
 const router: Router = Router();
+
+// User routes
+router.use('/users', userRoutes);
 
 // Board routes
 router.use('/boards', boardRoutes);

@@ -337,18 +337,21 @@ export const BoardProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   // Board actions
-  const fetchBoards = useCallback(async () => {
-    setLoading('boards', true);
-    setError('boards', null);
-    try {
-      const boards = await boardService.getAllBoards();
-      dispatch({ type: 'SET_BOARDS', payload: boards });
-    } catch (error) {
-      handleApiError(error, 'boards');
-    } finally {
-      setLoading('boards', false);
-    }
-  }, [setLoading, setError, handleApiError]);
+  const fetchBoards = useCallback(
+    async (userId?: string) => {
+      setLoading('boards', true);
+      setError('boards', null);
+      try {
+        const boards = await boardService.getAllBoards(userId);
+        dispatch({ type: 'SET_BOARDS', payload: boards });
+      } catch (error) {
+        handleApiError(error, 'boards');
+      } finally {
+        setLoading('boards', false);
+      }
+    },
+    [setLoading, setError, handleApiError]
+  );
 
   const fetchBoard = useCallback(
     async (id: string) => {

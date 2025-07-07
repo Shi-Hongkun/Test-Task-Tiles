@@ -6,7 +6,17 @@ export class BoardController {
   // GET /api/boards
   async getAllBoards(req: Request, res: Response): Promise<void> {
     try {
-      const boards = await boardService.getAllBoards();
+      const { userId } = req.query;
+      let boards;
+
+      if (userId && typeof userId === 'string') {
+        // 根据用户ID过滤boards
+        boards = await boardService.getBoardsForUser(userId);
+      } else {
+        // 获取所有boards
+        boards = await boardService.getAllBoards();
+      }
+
       const response: ApiResponse = {
         success: true,
         data: boards,
@@ -17,7 +27,8 @@ export class BoardController {
       console.error('Error getting boards:', error);
       const response: ApiResponse = {
         success: false,
-        error: 'Failed to retrieve boards',
+        error:
+          error instanceof Error ? error.message : 'Failed to retrieve boards',
       };
       res.status(500).json(response);
     }
