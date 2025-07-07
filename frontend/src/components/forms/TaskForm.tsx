@@ -33,6 +33,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
     itemType: undefined,
     initiative: '',
     estimateSize: undefined,
+    startDate: '',
     deadline: '',
     tags: [],
   });
@@ -51,6 +52,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
         itemType: task.itemType,
         initiative: task.initiative || '',
         estimateSize: task.estimateSize,
+        startDate: task.startDate ? task.startDate.split('T')[0] : '', // Format for date input
         deadline: task.deadline ? task.deadline.split('T')[0] : '', // Format for date input
         tags: task.tags || [],
       });
@@ -65,6 +67,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
         itemType: undefined,
         initiative: '',
         estimateSize: undefined,
+        startDate: '',
         deadline: '',
         tags: [],
       });
@@ -284,6 +287,15 @@ export const TaskForm: React.FC<TaskFormProps> = ({
               placeholder="Select size..."
             />
 
+            <Input
+              label="Start Date"
+              type="date"
+              value={formData.startDate || ''}
+              onChange={(e) => handleInputChange('startDate', e.target.value)}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
             <Input
               label="Deadline"
               type="date"

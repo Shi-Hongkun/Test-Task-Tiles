@@ -88,6 +88,7 @@ export interface TaskDto {
   itemType?: ItemType;
   initiative?: string;
   estimateSize?: EstimateSize;
+  startDate?: string;
   deadline?: string;
   tags?: string[];
 
@@ -109,6 +110,7 @@ export interface CreateTaskRequest {
   itemType?: ItemType;
   initiative?: string;
   estimateSize?: EstimateSize;
+  startDate?: string;
   deadline?: string;
   tags?: string[];
 }
@@ -127,6 +129,7 @@ export interface UpdateTaskRequest {
   itemType?: ItemType;
   initiative?: string;
   estimateSize?: EstimateSize;
+  startDate?: string;
   deadline?: string;
   tags?: string[];
 }

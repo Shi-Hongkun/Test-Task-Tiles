@@ -214,6 +214,14 @@ export const TaskCard: React.FC<TaskCardProps> = ({
           {task.title}
         </h4>
 
+        {/* Task Description (truncated) */}
+        {task.description && (
+          <p className="text-xs text-gray-600 mb-3 line-clamp-2">
+            {task.description.split(' ').slice(0, 15).join(' ')}
+            {task.description.split(' ').length > 15 && '... (Expand)'}
+          </p>
+        )}
+
         {/* Task Meta Information */}
         <div className="space-y-2">
           {task.initiative && (
@@ -249,20 +257,31 @@ export const TaskCard: React.FC<TaskCardProps> = ({
               </span>
             )}
 
-            {task.deadline && (
-              <div className="flex items-center gap-1 text-xs text-gray-600">
-                <Calendar className="h-3 w-3" />
-                <span
-                  className={cn(
-                    new Date(task.deadline) < new Date()
-                      ? 'text-red-600 font-medium'
-                      : ''
-                  )}
-                >
-                  {new Date(task.deadline).toLocaleDateString()}
-                </span>
-              </div>
-            )}
+            <div className="flex items-center gap-2">
+              {task.startDate && (
+                <div className="flex items-center gap-1 text-xs text-gray-600">
+                  <Calendar className="h-3 w-3 text-green-500" />
+                  <span className="text-green-600">
+                    {new Date(task.startDate).toLocaleDateString()}
+                  </span>
+                </div>
+              )}
+
+              {task.deadline && (
+                <div className="flex items-center gap-1 text-xs text-gray-600">
+                  <Calendar className="h-3 w-3" />
+                  <span
+                    className={cn(
+                      new Date(task.deadline) < new Date()
+                        ? 'text-red-600 font-medium'
+                        : ''
+                    )}
+                  >
+                    {new Date(task.deadline).toLocaleDateString()}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

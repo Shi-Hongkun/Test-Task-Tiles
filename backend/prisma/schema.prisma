@@ -52,6 +52,7 @@ model Task {
   itemType     ItemType? @default(TASK)
   initiative   String?   // Project/initiative name
   estimateSize EstimateSize? @map("estimate_size")
+  startDate    DateTime? @map("start_date")  // Task start date
   deadline     DateTime?
   tags         String[]  // Array of tags
   

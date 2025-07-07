@@ -24,6 +24,7 @@ export class TaskService {
       itemType: task.itemType || undefined,
       initiative: task.initiative || undefined,
       estimateSize: task.estimateSize || undefined,
+      startDate: task.startDate ? task.startDate.toISOString() : undefined,
       deadline: task.deadline ? task.deadline.toISOString() : undefined,
       tags: task.tags || [],
 
@@ -66,6 +67,7 @@ export class TaskService {
         itemType: data.itemType,
         initiative: data.initiative,
         estimateSize: data.estimateSize,
+        startDate: data.startDate ? new Date(data.startDate) : undefined,
         deadline: data.deadline ? new Date(data.deadline) : undefined,
         tags: data.tags,
       },
@@ -97,6 +99,8 @@ export class TaskService {
     if (data.initiative !== undefined) updateData.initiative = data.initiative;
     if (data.estimateSize !== undefined)
       updateData.estimateSize = data.estimateSize;
+    if (data.startDate !== undefined)
+      updateData.startDate = data.startDate ? new Date(data.startDate) : null;
     if (data.deadline !== undefined)
       updateData.deadline = data.deadline ? new Date(data.deadline) : null;
     if (data.tags !== undefined) updateData.tags = data.tags;
