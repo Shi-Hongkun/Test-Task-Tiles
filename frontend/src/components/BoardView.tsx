@@ -174,38 +174,43 @@ export const BoardView: React.FC<BoardViewProps> = ({
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className="h-full flex flex-col">
+      <div className="h-full flex flex-col bg-surface-50">
         {/* Board Header */}
-        <div className="flex-shrink-0 p-6 border-b border-gray-200">
-          {/* Breadcrumb Navigation */}
-          <div className="flex items-center gap-2 mb-4">
-            <button
-              onClick={onNavigateHome}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <Home className="h-4 w-4" />
-              <span className="text-sm font-medium">Home</span>
-            </button>
-            <ChevronRight className="h-4 w-4 text-gray-400" />
-            <span className="text-sm font-medium text-gray-900">
-              {currentBoard.name}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+        <div className="flex-shrink-0 bg-white border-b border-gray-200 shadow-sm">
+          <div className="p-6">
+            {/* Breadcrumb Navigation */}
+            <div className="flex items-center gap-2 mb-4">
+              <button
+                onClick={onNavigateHome}
+                className="flex items-center gap-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 px-2 py-1 rounded-button transition-all"
+              >
+                <Home className="h-4 w-4" />
+                <span className="text-sm font-medium">Home</span>
+              </button>
+              <ChevronRight className="h-4 w-4 text-gray-400" />
+              <span className="text-sm font-medium text-gray-900">
                 {currentBoard.name}
-              </h1>
-              {currentBoard.description && (
-                <p className="mt-1 text-gray-600">{currentBoard.description}</p>
-              )}
+              </span>
             </div>
 
-            <Button onClick={onCreateColumn}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Column
-            </Button>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-1">
+                  {currentBoard.name}
+                </h1>
+                {currentBoard.description && (
+                  <p className="text-gray-600">{currentBoard.description}</p>
+                )}
+              </div>
+
+              <button
+                onClick={onCreateColumn}
+                className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-button font-medium shadow-sm hover:shadow transition-all flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add Column
+              </button>
+            </div>
           </div>
         </div>
 
@@ -229,21 +234,42 @@ export const BoardView: React.FC<BoardViewProps> = ({
                   />
                 ))}
 
+                {/* Add Column Button */}
+                <div className="flex-shrink-0 w-80">
+                  <button
+                    onClick={onCreateColumn}
+                    className="w-full h-32 bg-white hover:bg-surface-50 border-2 border-dashed border-gray-300 hover:border-primary-400 rounded-card transition-all flex items-center justify-center text-gray-500 hover:text-primary-600"
+                  >
+                    <div className="text-center">
+                      <Plus className="h-6 w-6 mx-auto mb-2" />
+                      <span className="text-sm font-medium">
+                        Add another list
+                      </span>
+                    </div>
+                  </button>
+                </div>
+
                 {/* Empty State */}
                 {currentBoard.columns.length === 0 && (
                   <div className="flex items-center justify-center h-full w-full">
-                    <div className="text-center">
-                      <div className="text-4xl mb-4">📋</div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">
-                        No columns yet
+                    <div className="text-center bg-white rounded-card p-8 shadow-card">
+                      <div className="w-16 h-16 bg-surface-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Plus className="h-7 w-7 text-gray-500" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                        Ready to get organized?
                       </h3>
-                      <p className="text-gray-600 mb-4">
-                        Create your first column to start organizing tasks
+                      <p className="text-gray-600 mb-6 max-w-md">
+                        Create your first column to start organizing tasks into
+                        a workflow
                       </p>
-                      <Button onClick={onCreateColumn}>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Your First Column
-                      </Button>
+                      <button
+                        onClick={onCreateColumn}
+                        className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-button font-medium shadow-sm hover:shadow transition-all flex items-center gap-2 mx-auto"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Create Your First Column
+                      </button>
                     </div>
                   </div>
                 )}
@@ -256,7 +282,7 @@ export const BoardView: React.FC<BoardViewProps> = ({
       {/* Drag Overlay */}
       <DragOverlay>
         {activeTask && (
-          <div className="rotate-3 opacity-90">
+          <div className="rotate-2 opacity-95 scale-105">
             <TaskCard task={activeTask} onEdit={() => {}} onDelete={() => {}} />
           </div>
         )}
