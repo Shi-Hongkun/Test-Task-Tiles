@@ -27,25 +27,25 @@ const getColumnStatusColor = (columnName: string): string => {
     name.includes('to do') ||
     name.includes('backlog')
   ) {
-    return 'border-status-todo';
+    return 'border-gray-500';
   } else if (
     name.includes('progress') ||
     name.includes('working') ||
     name.includes('doing')
   ) {
-    return 'border-status-progress';
+    return 'border-blue-500';
   } else if (
     name.includes('review') ||
     name.includes('testing') ||
     name.includes('qa')
   ) {
-    return 'border-status-review';
+    return 'border-amber-500';
   } else if (
     name.includes('done') ||
     name.includes('completed') ||
     name.includes('finished')
   ) {
-    return 'border-status-done';
+    return 'border-emerald-500';
   }
   return 'border-gray-300';
 };
@@ -57,25 +57,25 @@ const getColumnHeaderColor = (columnName: string): string => {
     name.includes('to do') ||
     name.includes('backlog')
   ) {
-    return 'text-status-todo';
+    return 'text-gray-600';
   } else if (
     name.includes('progress') ||
     name.includes('working') ||
     name.includes('doing')
   ) {
-    return 'text-status-progress';
+    return 'text-blue-600';
   } else if (
     name.includes('review') ||
     name.includes('testing') ||
     name.includes('qa')
   ) {
-    return 'text-status-review';
+    return 'text-amber-600';
   } else if (
     name.includes('done') ||
     name.includes('completed') ||
     name.includes('finished')
   ) {
-    return 'text-status-done';
+    return 'text-emerald-600';
   }
   return 'text-gray-700';
 };
