@@ -21,4 +21,12 @@ echo "✅ PostgreSQL is ready!"
 echo "🔄 Generating Prisma client..."
 pnpm db:generate
 
+# Push database schema (equivalent to migration)
+echo "🔄 Pushing database schema..."
+pnpm db:push
+
+# Seed database if it's empty (safe to run multiple times)
+echo "🌱 Seeding database with sample data..."
+pnpm db:seed || echo "⚠️  Seeding skipped (data may already exist)"
+
 echo "🎉 Development container setup complete!" 

@@ -5,7 +5,14 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Starting database seed...');
 
-  // Clear existing data
+  // Check if data already exists
+  const existingBoards = await prisma.board.count();
+  if (existingBoards > 0) {
+    console.log('✅ Database already has data, skipping seed');
+    return;
+  }
+
+  // Clear existing data (safety measure)
   await prisma.task.deleteMany();
   await prisma.column.deleteMany();
   await prisma.board.deleteMany();
