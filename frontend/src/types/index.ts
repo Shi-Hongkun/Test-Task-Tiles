@@ -280,6 +280,9 @@ export interface User {
 export interface UserContextValue {
   currentUser: User | null;
   users: User[];
+  isAuthenticated: boolean;
   switchUser: (userId: string) => void;
+  login: (userId: string, password: string) => Promise<void>;
+  logout: () => void;
   loading: boolean;
 }
